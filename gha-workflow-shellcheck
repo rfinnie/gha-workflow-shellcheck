@@ -1,0 +1,50 @@
+#!/usr/bin/env python3
+
+# gha-workflow-shellcheck
+# Copyright (C) 2025 Ryan Finnie <ryan@finnie.org>
+# SPDX-License-Identifier: MPL-2.0
+
+import logging
+import subprocess
+import sys
+import tempfile
+
+import yaml
+
+
+if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
+    exit_status = 0
+    for filename in sys.argv[1:]:
+        with open(filename) as f:
+            y = yaml.safe_load(f)
+        jobs = y.get("jobs", {})
+        if not isinstance(jobs, (dict,)):
+            continue
+        for job_name, job in jobs.items():
+            steps = job.get("steps", [])
+            if not isinstance(steps, (list, tuple)):
+                continue
+            for step_num, step in enumerate(steps):
+                if "run" not in step:
+                    continue
+                shell = step.get("shell", "bash")
+                if shell not in ("sh", "bash", "dash", "ksh", "busybox"):
+                    continue
+                step_name = step.get("name", "Step #{}".format(step_num + 1))
+                shellcode = step["run"].replace("${{", "[GITHUB CONTEXT]{{")
+                with tempfile.NamedTemporaryFile("w+") as tmp:
+                    tmp.file.write(shellcode)
+                    tmp.file.flush()
+                    try:
+                        subprocess.check_call(
+                            ["shellcheck", "--shell={}".format(shell), tmp.name]
+                        )
+                    except subprocess.CalledProcessError:
+                        logging.error(
+                            "shellcheck error (output is above) in file: {}, job: {}, step: {}".format(
+                                filename, job_name, step_name
+                            )
+                        )
+                        exit_status = 1
+    sys.exit(exit_status)
