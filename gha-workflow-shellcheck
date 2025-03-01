@@ -28,6 +28,8 @@ if __name__ == "__main__":
             if not isinstance(steps, (list, tuple)):
                 continue
             for step_num, step in enumerate(steps):
+                if not isinstance(step, (dict,)):
+                    continue
                 if "run" not in step:
                     continue
                 shell = step.get("shell", "bash")
