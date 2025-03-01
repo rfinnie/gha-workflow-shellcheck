@@ -1,0 +1,15 @@
+# SPDX-PackageSummary: gha-workflow-shellcheck
+# SPDX-FileCopyrightText: Copyright (C) 2025 Ryan Finnie
+# SPDX-License-Identifier: MPL-2.0
+---
+name: "ci"
+"on":
+  push:
+  pull_request:
+  workflow_dispatch:
+jobs:
+  pre-commit:
+    runs-on: "ubuntu-latest"
+    steps:
+      - uses: "actions/checkout@v4"
+      - uses: "pre-commit/action@v3.0.1"
