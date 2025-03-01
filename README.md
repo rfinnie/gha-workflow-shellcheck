@@ -6,3 +6,4 @@ It also turns [GitHub context variables](https://docs.github.com/en/actions/writ
 This is so `shellcheck` doesn't interpret it literally as a shell variable, but still sees *a* shell variable and hence will detect if, for example, it's within proper shell quoting.
 
 It may be pulled in as a [pre-commit](https://pre-commit.com/) hook.
+It should be tolerant of any YAML file passed to it, not just GitHub Actions workflow files, so it is safe to be registered as `types: [yaml]` with pre-commit.
