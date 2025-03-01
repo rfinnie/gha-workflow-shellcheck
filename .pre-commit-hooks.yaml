@@ -1,6 +1,11 @@
--   id: gha-workflow-shellcheck
-    name: GitHub Actions workflow shellcheck
-    description: Runs shellcheck on GitHub Actions workflow steps
-    entry: gha-workflow-shellcheck
-    language: python
-    types: [yaml]
+# SPDX-PackageSummary: gha-workflow-shellcheck
+# SPDX-FileCopyrightText: Copyright (C) 2025 Ryan Finnie
+# SPDX-License-Identifier: MPL-2.0
+
+---
+- id: "gha-workflow-shellcheck"
+  name: "GitHub Actions workflow shellcheck"
+  description: "Runs shellcheck on GitHub Actions workflow steps"
+  entry: "gha-workflow-shellcheck"
+  language: "python"
+  types: ["yaml"]

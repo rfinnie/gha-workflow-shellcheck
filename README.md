@@ -7,3 +7,13 @@ This is so `shellcheck` doesn't interpret it literally as a shell variable, but 
 
 It may be pulled in as a [pre-commit](https://pre-commit.com/) hook.
 It should be tolerant of any YAML file passed to it, not just GitHub Actions workflow files, so it is safe to be registered as `types: [yaml]` with pre-commit.
+
+## License
+
+This package is licensed under the terms of the Mozilla Public License v2.0.
+
+This document is provided under the following license:
+
+    SPDX-PackageSummary: gha-workflow-shellcheck
+    SPDX-FileCopyrightText: Copyright (C) 2025 Ryan Finnie
+    SPDX-License-Identifier: CC-BY-SA-4.0
