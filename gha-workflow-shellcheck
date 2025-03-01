@@ -32,7 +32,7 @@ if __name__ == "__main__":
                 if shell not in ("sh", "bash", "dash", "ksh", "busybox"):
                     continue
                 step_name = step.get("name", "Step #{}".format(step_num + 1))
-                shellcode = step["run"].replace("${{", "[GITHUB CONTEXT]{{")
+                shellcode = step["run"].replace("${{", "${GITHUB_CONTEXT}{{")
                 with tempfile.NamedTemporaryFile("w+") as tmp:
                     tmp.file.write(shellcode)
                     tmp.file.flush()
