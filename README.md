@@ -1,5 +1,7 @@
 # GitHub Actions workflow shellcheck
 
+*This software was written for a few hours before I discovered [actionlint](https://github.com/rhysd/actionlint). My version is functional, but you should probably just use actionlint instead.*
+
 This script picks apart `run` job steps in GitHub Actions workflow files and runs `shellcheck` on them.
 It honors the `shell` attribute and will pass it along to `shellcheck`.
 It also turns [GitHub context variables](https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/accessing-contextual-information-about-workflow-runs) such as `${{ matrix.version }}` into placeholders such as `${GITHUB_CONTEXT}{{ matrix.version }}`.
