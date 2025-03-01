@@ -4,7 +4,9 @@
 # Copyright (C) 2025 Ryan Finnie <ryan@finnie.org>
 # SPDX-License-Identifier: MPL-2.0
 
+import argparse
 import logging
+import pathlib
 import subprocess
 import sys
 import tempfile
@@ -12,28 +14,55 @@ import tempfile
 import yaml
 
 
-if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO)
+class GHAWorkflowShellcheck:
     exit_status = 0
-    for filename in sys.argv[1:]:
-        with open(filename) as f:
+
+    def parse_args(self, argv=None):
+        if argv is None:
+            argv = sys.argv
+
+        parser = argparse.ArgumentParser(
+            formatter_class=argparse.ArgumentDefaultsHelpFormatter
+        )
+
+        parser.add_argument(
+            "files",
+            nargs="*",
+            type=pathlib.Path,
+            help="YAML file",
+            metavar="file",
+        )
+        parser.add_argument(
+            "--debug", action="store_true", help="Print debugging information"
+        )
+
+        return parser.parse_args(args=argv[1:])
+
+    def check_file(self, file):
+        logging.debug("Checking {}".format(file))
+        with file.open() as f:
             y = yaml.safe_load(f)
         if not isinstance(y, (dict,)):
-            continue
+            logging.debug("Valid YAML but invalid workflow, skipping")
+            return
         jobs = y.get("jobs", {})
         if not isinstance(jobs, (dict,)):
-            continue
+            logging.debug("Valid YAML but invalid workflow, skipping")
+            return
         for job_name, job in jobs.items():
             steps = job.get("steps", [])
             if not isinstance(steps, (list, tuple)):
+                logging.debug("{}: invalid steps definition".format(job_name))
                 continue
             for step_num, step in enumerate(steps):
                 if not isinstance(step, (dict,)):
+                    logging.debug("{}: invalid step #{}".format(job_name, step_num + 1))
                     continue
                 if "run" not in step:
                     continue
                 shell = step.get("shell", "bash")
                 if shell not in ("sh", "bash", "dash", "ksh", "busybox"):
+                    logging.debug("Unsupported shell {}, skipping".format(shell))
                     continue
                 step_name = step.get("name", "Step #{}".format(step_num + 1))
                 shellcode = step["run"].replace("${{", "${GITHUB_CONTEXT}{{")
@@ -47,8 +76,18 @@ if __name__ == "__main__":
                     except subprocess.CalledProcessError:
                         logging.error(
                             "shellcheck error (output is above) in file: {}, job: {}, step: {}".format(
-                                filename, job_name, step_name
+                                file, job_name, step_name
                             )
                         )
-                        exit_status = 1
-    sys.exit(exit_status)
+                        self.exit_status = 1
+
+    def main(self):
+        self.args = self.parse_args()
+        logging.basicConfig(level=(logging.DEBUG if self.args.debug else logging.INFO))
+        for file in self.args.files:
+            self.check_file(file)
+        return self.exit_status
+
+
+if __name__ == "__main__":
+    sys.exit(GHAWorkflowShellcheck().main())
