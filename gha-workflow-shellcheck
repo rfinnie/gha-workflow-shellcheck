@@ -18,6 +18,8 @@ if __name__ == "__main__":
     for filename in sys.argv[1:]:
         with open(filename) as f:
             y = yaml.safe_load(f)
+        if not isinstance(y, (dict,)):
+            continue
         jobs = y.get("jobs", {})
         if not isinstance(jobs, (dict,)):
             continue
