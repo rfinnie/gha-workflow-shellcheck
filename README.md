@@ -11,7 +11,7 @@ It should be tolerant of any YAML file passed to it, not just GitHub Actions wor
 ```yaml
 repos:
   - repo: "https://github.com/rfinnie/gha-workflow-shellcheck"
-    rev: "v0.0.2"
+    rev: "v0.0.3"
     hooks:
       - id: "gha-workflow-shellcheck"
 ```

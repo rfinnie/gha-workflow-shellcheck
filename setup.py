@@ -5,7 +5,7 @@ from setuptools import setup
 # Copyright (C) 2025 Ryan Finnie <ryan@finnie.org>
 # SPDX-License-Identifier: MPL-2.0
 
-__version__ = "0.0.2"
+__version__ = "0.0.3"
 
 
 setup(
